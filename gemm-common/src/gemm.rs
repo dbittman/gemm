@@ -404,7 +404,7 @@ pub unsafe fn gemm_basic_generic<
         } else if is_c64 {
             get_threading_threshold() / 16
         } else {
-            get_threading_threshold()
+            get_threading_threshold() / 16
         }
     };
 
@@ -513,11 +513,18 @@ pub unsafe fn gemm_basic_generic<
                 #[cfg(feature = "rayon")]
                 Parallelism::Rayon(_) => {
                     let total_work = (m * n_chunk).saturating_mul(k_chunk);
-                    if total_work < threading_threshold {
-                        1
+                    let n_threads = if total_work > threading_threshold {
+                        std::cmp::max(
+                            1,
+                            std::cmp::min(
+                                max_threads,
+                                (total_work - threading_threshold + 1) / threading_threshold,
+                            ),
+                        )
                     } else {
-                        max_threads
-                    }
+                        1
+                    };
+                    n_threads
                 }
             };
 
