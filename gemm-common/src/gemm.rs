@@ -404,7 +404,7 @@ pub unsafe fn gemm_basic_generic<
         } else if is_c64 {
             get_threading_threshold() / 16
         } else {
-            get_threading_threshold() / 16
+            get_threading_threshold() / 8
         }
     };
 

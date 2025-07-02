@@ -574,8 +574,8 @@ pub unsafe fn mixed_gemv_rowmajor<
                     };
                     let _ = (0..m)
                         .into_par_iter()
-                        .with_min_len(16)
-                        .with_max_len(128)
+                        .with_min_len(32)
+                        .with_max_len(256)
                         .for_each(|row| {
                             call_inner(row);
                         });
